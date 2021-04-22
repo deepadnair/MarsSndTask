@@ -16,11 +16,22 @@ using System.Threading.Tasks;
 using static MarsSndTask.Global.Base;
 using static MarsSndTask.Global.GlobalDefinitions;
 using MarsSndTask.Config;
+using OpenQA.Selenium.Firefox;
+using Microsoft.Owin.BuilderProperties;
 
 namespace MarsSndTask.Pages
 {
+   
     internal class ShareSkills
     {
+
+        public enum BrowserType
+        {
+            Firefox,
+            Chrome,
+
+        }
+       
         [Obsolete]
         public ShareSkills()
         {
@@ -178,13 +189,17 @@ namespace MarsSndTask.Pages
             // Select Start Date
             //StartDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "StartDate"));
             // Select End Date
-            EndDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "EndDate"));
+            
+          EndDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "EndDate"));
 
             // select available days and start time and End time 
 
-            // select available days and start time and End time           
+            // select available days and start time and End time   
+            Thread.Sleep(3000);
               IList<IWebElement> Sttim = driver.FindElements(By.Name("StartTime"));
-              IList<IWebElement> Edtim = driver.FindElements(By.Name("EndTime"));
+           
+            IList<IWebElement> Edtim = driver.FindElements(By.Name("EndTime"));
+              //Driver.FindElements(By.Name("EndTime"));
               IList<IWebElement> Ckbx = driver.FindElements(By.XPath("(//input[@name='Available'])"));
 
               if (Ckbx.Count != 0)
@@ -198,13 +213,24 @@ namespace MarsSndTask.Pages
                           Ckbx.ElementAt(i).Click();
 
                       }
-                      //Validating the Count
+                    Console.WriteLine(driver);
+                    //Validating the Count
 
-                      Sttim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i + 1, "StartTime"));
-                      Thread.Sleep(2000);
-                      Edtim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i + 1, "EndTime"));
-                      Thread.Sleep(2000);
+                 
+                       Sttim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i+1, "StartTime"));
+                   // Sttim.ElementAt(i).SendKeys("10:00");
 
+
+                    /*  var Svalue = Sttim.ElementAt(i).GetAttribute("value");
+                       Console.WriteLine(Svalue);
+                       Sttim.ElementAt(i).SendKeys(Svalue);*/
+
+                    Thread.Sleep(2000);
+                        // Sttim.ElementAt(i).Clear();
+                        Edtim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i+1, "EndTime"));
+                        // Edtim.ElementAt(i).SendKeys("18:00");
+                        Thread.Sleep(2000);
+                    
                   }
 
               }
@@ -261,7 +287,7 @@ namespace MarsSndTask.Pages
 
             //String expectedValue = GlobalDefinitions.ExcelLib.ReadData(2, "title");
             String actualTitle = driver.Title;
-            //string ShareSkillSucess = driver.FindElement(By.TagName("h2")).Text;
+            //string ShareSkillSucess = Driver.FindElement(By.TagName("h2")).Text;
             if (actualTitle == "ListingManagement")
             {
                 Assert.IsTrue(true);
@@ -277,111 +303,114 @@ namespace MarsSndTask.Pages
             }
             #endregion
         }
+
+       
         #endregion
 
         #region Edit Skill
         public void EditSkill()
+{
+    #region populate excel         
+
+    //Populate the excel data            
+    GlobalDefinitions.ExcelLib.PopulateInCollection(MarsResources.ExcelPath, "Managelisting");
+    #endregion
+
+    #region Enter Title 
+    Title.WaitForElementClickable(Global.Base.driver, 60);
+    //Enter the data in Title textbox
+    Title.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "title"));
+    #endregion
+
+    #region Enter Description
+    //Enter the data in Description textbox
+    Description.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "EnterDescription"));
+    #endregion
+
+    #region Category Drop Down
+
+    // Click on Category Dropdown
+    Category.Click();
+    Thread.Sleep(1000);
+    // Select Category from Category Drop Down
+    var selectElement = new SelectElement(Category);
+    selectElement.SelectByIndex(3);
+    // Click on Sub-Category Dropdown
+    SubCategory.Click();
+    Thread.Sleep(1000);
+    //Select Sub-Category from the Drop Down
+    var SelectElement1 = new SelectElement(SubCategory);
+    SelectElement1.SelectByIndex(4);
+    #endregion
+
+    #region Tags
+    // Eneter Tag
+    Tags.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "TagName"));
+    Tags.SendKeys(Keys.Enter);
+    Tags.SendKeys(GlobalDefinitions.ExcelLib.ReadData(3, "TagName"));
+    Tags.SendKeys(Keys.Enter);
+    #endregion
+
+    #region Service Type Selection
+    // Service Type Selection
+    if (GlobalDefinitions.ExcelLib.ReadData(2, "ServiceType") == "Hourly basis service")
+    {
+        ServiceTypeHourly.Click();
+    }
+    else if (GlobalDefinitions.ExcelLib.ReadData(2, "ServiceType") == "One-off service")
+    {
+        ServiceTypeOnOff.Click();
+    }
+    #endregion
+
+    #region Select Location Type
+    // Location Type Selection
+
+    if (GlobalDefinitions.ExcelLib.ReadData(2, "SelectLocationType") == "On-site")
+    {
+        LocationTypeOnsite.Click();
+    }
+    else if (GlobalDefinitions.ExcelLib.ReadData(2, "SelectLocationType") == "Online")
+    {
+        LocationTypeOnline.Click();
+    }
+    #endregion
+
+    #region Select Available Dates from Calendar
+    // Select Start Date
+    //StartDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "StartDate"));
+    // Select End Date
+    EndDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "EndDate"));
+
+    // select available days and start time and End time 
+
+
+    IList<IWebElement> Sttim = driver.FindElements(By.Name("StartTime"));
+    IList<IWebElement> Edtim = driver.FindElements(By.Name("EndTime"));
+    IList<IWebElement> Ckbx = driver.FindElements(By.XPath("(//input[@name='Available'])"));
+
+    if (Ckbx.Count != 0)
+    {
+        //Selecting checkboxes for days from Monday to Friday
+        for (int i = 1; i <= Ckbx.Count - 2; i++)
         {
-            #region populate excel         
-
-            //Populate the excel data            
-            GlobalDefinitions.ExcelLib.PopulateInCollection(MarsResources.ExcelPath, "Managelisting");
-            #endregion
-
-            #region Enter Title 
-            Title.WaitForElementClickable(Global.Base.driver, 60);
-            //Enter the data in Title textbox
-            Title.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "title"));
-            #endregion
-
-            #region Enter Description
-            //Enter the data in Description textbox
-            Description.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "EnterDescription"));
-            #endregion
-
-            #region Category Drop Down
-
-            // Click on Category Dropdown
-            Category.Click();
-            Thread.Sleep(1000);
-            // Select Category from Category Drop Down
-            var selectElement = new SelectElement(Category);
-            selectElement.SelectByIndex(3);
-            // Click on Sub-Category Dropdown
-            SubCategory.Click();
-            Thread.Sleep(1000);
-            //Select Sub-Category from the Drop Down
-            var SelectElement1 = new SelectElement(SubCategory);
-            SelectElement1.SelectByIndex(4);
-            #endregion
-
-            #region Tags
-            // Eneter Tag
-            Tags.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "TagName"));
-            Tags.SendKeys(Keys.Enter);
-            Tags.SendKeys(GlobalDefinitions.ExcelLib.ReadData(3, "TagName"));
-            Tags.SendKeys(Keys.Enter);
-            #endregion
-
-            #region Service Type Selection
-            // Service Type Selection
-            if (GlobalDefinitions.ExcelLib.ReadData(2, "ServiceType") == "Hourly basis service")
+            //Verify whether checkbox is not selected
+            if (!Ckbx.ElementAt(i).Selected)
             {
-                ServiceTypeHourly.Click();
-            }
-            else if (GlobalDefinitions.ExcelLib.ReadData(2, "ServiceType") == "One-off service")
-            {
-                ServiceTypeOnOff.Click();
-            }
-            #endregion
-
-            #region Select Location Type
-            // Location Type Selection
-
-            if (GlobalDefinitions.ExcelLib.ReadData(2, "SelectLocationType") == "On-site")
-            {
-                LocationTypeOnsite.Click();
-            }
-            else if (GlobalDefinitions.ExcelLib.ReadData(2, "SelectLocationType") == "Online")
-            {
-                LocationTypeOnline.Click();
-            }
-            #endregion
-
-            #region Select Available Dates from Calendar
-            // Select Start Date
-            //StartDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "StartDate"));
-            // Select End Date
-            EndDate.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "EndDate"));
-
-            // select available days and start time and End time 
-
-           
-           IList<IWebElement> Sttim = driver.FindElements(By.Name("StartTime"));
-            IList<IWebElement> Edtim = driver.FindElements(By.Name("EndTime"));
-            IList<IWebElement> Ckbx = driver.FindElements(By.XPath("(//input[@name='Available'])"));
-
-            if (Ckbx.Count != 0)
-            {
-                //Selecting checkboxes for days from Monday to Friday
-                for (int i = 1; i <= Ckbx.Count - 2; i++)
-                {
-                    //Verify whether checkbox is not selected
-                    if (!Ckbx.ElementAt(i).Selected)
-                    {
-                        Ckbx.ElementAt(i).Click();
-
-                    }
-                    //Validating the Count
-
-                    Sttim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i + 1, "StartTime"));
-                    Thread.Sleep(2000);
-                    Edtim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i + 1, "EndTime"));
-                    Thread.Sleep(2000);
-
-                }
+                Ckbx.ElementAt(i).Click();
 
             }
+            //Validating the Count
+
+            Sttim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i + 1, "StartTime"));
+            Thread.Sleep(2000);
+            Edtim.ElementAt(i).SendKeys(GlobalDefinitions.ExcelLib.ReadData(i + 1, "EndTime"));
+            Thread.Sleep(2000);
+
+        }
+
+    }
+
             #endregion
             #region Select Skill Trade
             // Select Skill Trade
@@ -398,8 +427,23 @@ namespace MarsSndTask.Pages
             {
                 Credit.Click();
                 CreditAmount.Click();
-                CreditAmount.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "AmountInExchange"));
-                CreditAmount.SendKeys(Keys.Enter);
+                string input = GlobalDefinitions.ExcelLib.ReadData(2, "AmountInExchange"); 
+               
+                    int result = Int32.Parse(input);
+
+                if (result >= 10)
+                {
+                    SaveScreenShotClass.SaveScreenshot(driver, "More than One digit not Possible");
+                    Global.Base.test.Log(Status.Fail, "Two Digit not Added ");
+                    Assert.Fail("Entering more than One digit not Possible");
+                }
+                else
+                {
+                    CreditAmount.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "AmountInExchange"));
+                    CreditAmount.SendKeys(Keys.Enter);
+                }
+
+               
             }
             #endregion
 

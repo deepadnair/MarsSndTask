@@ -121,7 +121,7 @@ namespace MarsSndTask.Global
         #region screenshots
         public class SaveScreenShotClass
         {
-            public static string SaveScreenshot(IWebDriver driver, string ScreenShotFileName) // Definition
+            public static string SaveScreenshot(IWebDriver Driver, string ScreenShotFileName) // Definition
             {
                 var folderLocation = MarsResources.ScreenshotPath;
 
@@ -130,7 +130,7 @@ namespace MarsSndTask.Global
                     System.IO.Directory.CreateDirectory(folderLocation);
                 }
 
-                var screenShot = ((ITakesScreenshot)driver).GetScreenshot();
+                var screenShot = ((ITakesScreenshot)Driver).GetScreenshot();
                 var fileName = new StringBuilder(folderLocation);
 
                 fileName.Append(ScreenShotFileName);

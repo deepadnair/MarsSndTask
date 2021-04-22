@@ -22,7 +22,7 @@ namespace MarsSndTask.Pages
             PageFactory.InitElements(Global.Base.driver, this);
         }
 
-        // PageFactory.InitElements(driver, this);
+        // PageFactory.InitElements(Driver, this);
 
         #region  Initialize Web Elements -- With Pagefactory
         //Finding the SignIn Link
@@ -45,7 +45,7 @@ namespace MarsSndTask.Pages
         private IWebElement loggedin { get; set; }
         #endregion
 
-        internal void SignInStep(IWebDriver driver)
+        internal void SignInStep(IWebDriver Driver)
         {
             // populate Excel
             //Populate the excel data
@@ -55,15 +55,16 @@ namespace MarsSndTask.Pages
             password.SendKeys(GlobalDefinitions.ExcelLib.ReadData(2, "Password"));
             LoginBtn.Click();
             Thread.Sleep(2000);
-            if (driver.WaitForElementDisplayed(By.XPath("//a[contains(text(),'Mars Logo')]"), 60))
+            if (Driver.WaitForElementDisplayed(By.XPath("//a[contains(text(),'Mars Logo')]"), 60))
             {
                 test = extent.CreateTest("Login Test");
-                SaveScreenShotClass.SaveScreenshot(driver, "Login");
+                SaveScreenShotClass.SaveScreenshot(Driver, "Login");
                 test.Log(Status.Pass, "Login Successful");
             }
             else
             {
-                SaveScreenShotClass.SaveScreenshot(driver, "LoginFailed");
+                test = extent.CreateTest("Login Failed");
+                SaveScreenShotClass.SaveScreenshot(Driver, "LoginFailed");
                 test.Log(Status.Fail, "Login failed");
             }       
         }

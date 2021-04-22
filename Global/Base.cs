@@ -12,6 +12,8 @@ using static MarsSndTask.Global.GlobalDefinitions;
 using MarsSndTask.Config;
 using OpenQA.Selenium.Edge;
 
+
+
 namespace MarsSndTask.Global
 {
     public enum BrowserType
@@ -103,9 +105,10 @@ namespace MarsSndTask.Global
             extent.RemoveTest(test);
             // calling Flush writes everything to the log file (Reports)
             extent.Flush();
-            // Close the driver :)   
+            // Close the Driver :)   
           
             driver.Close();
+            driver.Quit();
         }
         #endregion
     }
